@@ -2,18 +2,31 @@ package org.ecosystem;
 
 import javafx.scene.layout.Pane;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Ecosystem {
     private final World world;
-    private final Rabbit rabbit;
+    private final List<Animal> animals;
 
     public Ecosystem(){
         world = new World();
-        rabbit = new Rabbit(400,300);
-        world.getChildren().add(rabbit.getGraphic());
+        animals = new ArrayList<>();
+        for (int i = 0; i < 20; i++) {
+            double x = Math.random()*World.width;
+            double y = Math.random()*World.length;
+
+            Rabbit rabbit = new Rabbit(x,y);
+            animals.add(rabbit);
+            world.getChildren().add(rabbit.getGraphic());
+        }
+
     }
 
     public void update(){
-        rabbit.move();
+        for(Animal animal: animals){
+            animal.move();
+        }
     }
     public Pane getWorld(){
         return world;
