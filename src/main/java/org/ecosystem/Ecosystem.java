@@ -16,7 +16,7 @@ public class Ecosystem {
         plants = new ArrayList<>();
 
         //creates rabbit
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 5; i++) {
             double x = Math.random()*World.WIDTH;
             double y = Math.random()*World.HEIGHT;
 
@@ -57,6 +57,42 @@ public class Ecosystem {
             if(animal instanceof Rabbit rabbit){
                 rabbit.update(plants);
             }
+
+        }
+        removeDeadAnimal();
+        reproduceRabbit();
+    }
+    //Remove dead animals from both simulation and screen
+    public void removeDeadAnimal(){
+        List<Animal> deadAnimal = new ArrayList<>();
+        //first find animals that are dead
+        for(Animal animal: animals){
+            if(animal.isDead()){
+                deadAnimal.add(animal);
+            }
+        }
+        //then remove it
+        for(Animal animal : deadAnimal){
+            animals.remove(animal);
+            if(animal instanceof Rabbit rabbit){
+                world.getChildren().remove(rabbit.getGraphic());
+            }
+        }
+    }
+    public void reproduceRabbit(){
+        List<Rabbit> babbies = new ArrayList<>();
+        for(Animal animal:animals){
+            if(animal instanceof Rabbit rabbit){
+                if(rabbit.canReproduce()) {
+                    Rabbit baby = rabbit.reproduce();
+                    System.out.println("Child added");
+                    babbies.add(baby);
+                }
+            }
+        }
+        for (Rabbit baby : babbies){
+            animals.add(baby);
+            world.getChildren().add(baby.getGraphic());
         }
     }
     public Pane getWorld(){

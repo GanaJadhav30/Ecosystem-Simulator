@@ -3,6 +3,7 @@ package org.ecosystem;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Rabbit extends Animal{
@@ -11,7 +12,9 @@ public class Rabbit extends Animal{
 
     private final double SPEED = 1.5;
     private final double EATING_DISTANCE=5;
-
+    private final double MAX_AGE=60;
+    private final double MAX_ENERGY=100;
+    private double reproductionCooldown=0;
 
     public Rabbit(double x, double y) {
         super(x, y);
@@ -91,6 +94,13 @@ public class Rabbit extends Animal{
     }
 
     public void update(List<Plant> plants){
+        age = age+0.016;
+        if(energy>80){
+            reproduce();
+        }
+        if(reproductionCooldown>0){
+            reproductionCooldown -= 0.016;
+        }
         Plant nearestPlant = findNearestplant(plants);
         if(nearestPlant!=null){
             moveToward(nearestPlant);
@@ -101,8 +111,21 @@ public class Rabbit extends Animal{
         }else{
             randomMovement();
         }
-        energy = energy-0.2;
+        energy = energy-0.02;
         updateGraphic();
+    }
+
+    public Rabbit reproduce(){
+        double babyX = x + Math.random()*20-10;
+        double babyY = y + Math.random()*20-10;
+        Rabbit baby = new Rabbit(babyX,babyY);
+        energy = energy-40;
+        reproductionCooldown = 1;
+        return baby;
+    }
+
+    public boolean canReproduce(){
+        return energy>=80&&reproductionCooldown<=0;
     }
 
     public void updateGraphic(){
