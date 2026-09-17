@@ -26,7 +26,7 @@ public class Main extends Application {
 
         timer.start();
 
-        Scene scene = new Scene(ecosystem.getWorld(),World.width,World.length);
+        Scene scene = new Scene(ecosystem.getWorld(),World.WIDTH,World.HEIGHT);
         stage.setTitle("Ecosystem Simulator");
         stage.setScene(scene);
         stage.show();

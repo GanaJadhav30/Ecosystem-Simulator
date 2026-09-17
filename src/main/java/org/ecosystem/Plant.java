@@ -7,11 +7,14 @@ public class Plant {
     private double x;
     private double y;
 
+    private double energy;
+
     private final Circle graphic;
 
     public Plant(double x,double y){
         this.x = x;
         this.y = y;
+        this.energy=30;
 
         graphic = new Circle(5, Color.DARKGREEN);
         updateGraphic();
@@ -28,6 +31,10 @@ public class Plant {
 
     public double getY(){
         return y;
+    }
+
+    public double getEnergy(){
+        return energy;
     }
 
     public Circle getGraphic(){
