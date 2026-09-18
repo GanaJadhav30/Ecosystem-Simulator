@@ -9,14 +9,16 @@ public class Ecosystem {
     private final World world;
     private final List<Animal> animals;
     private final List<Plant> plants;
+    private final List<Rabbit> rabbits;
 
     public Ecosystem(){
         world = new World();
         animals = new ArrayList<>();
         plants = new ArrayList<>();
+        rabbits = new ArrayList<>();
 
         //creates rabbit
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 2; i++) {
             double x = Math.random()*World.WIDTH;
             double y = Math.random()*World.HEIGHT;
 
@@ -49,16 +51,46 @@ public class Ecosystem {
             world.getChildren().add(plant.getGraphic());
         }
 
+        //create fox
+        for (int i = 0; i < 5; i++) {
+            double x = Math.random()*World.WIDTH;
+            double y = Math.random()*World.HEIGHT;
+
+            //left wall
+            if(x<20){
+                x = 20;
+            }
+            //right wall
+            if(x>World.WIDTH-20){
+                x = World.WIDTH-20;
+            }
+            //top wall
+            if(y<20){
+                y = 20;
+            }
+            //bottom wall
+            if(y>World.HEIGHT-20){
+                y = World.HEIGHT-20;
+            }
+            Fox fox = new Fox(x,y);
+            animals.add(fox);
+            world.getChildren().add(fox.getGraphic());
+        }
+
     }
+
 
 
     public void update(){
         for(Animal animal: animals){
             if(animal instanceof Rabbit rabbit){
-                rabbit.update(plants);
+                rabbit.update(plants,animals);
+            }else if(animal instanceof  Fox fox){
+                fox.update(animals);
             }
 
         }
+
         removeDeadAnimal();
         reproduceRabbit();
     }
@@ -77,15 +109,18 @@ public class Ecosystem {
             if(animal instanceof Rabbit rabbit){
                 world.getChildren().remove(rabbit.getGraphic());
             }
+            if(animal instanceof Fox fox){
+                world.getChildren().remove(fox.getGraphic());
+            }
         }
     }
-    public void reproduceRabbit(){
+    //Allow Rabbit to reproduce and spawns them in world
+    private void reproduceRabbit(){
         List<Rabbit> babbies = new ArrayList<>();
         for(Animal animal:animals){
             if(animal instanceof Rabbit rabbit){
                 if(rabbit.canReproduce()) {
                     Rabbit baby = rabbit.reproduce();
-                    System.out.println("Child added");
                     babbies.add(baby);
                 }
             }

@@ -10,7 +10,7 @@ public class Rabbit extends Animal{
 
     private final Circle graphic;
 
-    private final double SPEED = 1.5;
+    private final double SPEED = 3;
     private final double EATING_DISTANCE=5;
     private final double MAX_AGE=60;
     private final double MAX_ENERGY=100;
@@ -93,39 +93,100 @@ public class Rabbit extends Animal{
         plant.getGraphic().setVisible(false);
     }
 
-    public void update(List<Plant> plants){
+    public void update(List<Plant> plants,List<Animal> animals){
         age = age+0.016;
-        if(energy>80){
-            reproduce();
-        }
         if(reproductionCooldown>0){
             reproductionCooldown -= 0.016;
         }
-        Plant nearestPlant = findNearestplant(plants);
-        if(nearestPlant!=null){
-            moveToward(nearestPlant);
 
-            if(distanceTo(nearestPlant)<=EATING_DISTANCE){
-                eat(nearestPlant,plants);
+        Fox nearestFox = findNearestFox(animals);
+        if(nearestFox!=null&&distanceTo(nearestFox)<50){
+            moveAwayFrom(nearestFox);
+        }else {
+            Plant nearestPlant = findNearestplant(plants);
+            if (nearestPlant != null) {
+                moveToward(nearestPlant);
+
+                if (distanceTo(nearestPlant) <= EATING_DISTANCE) {
+                    eat(nearestPlant, plants);
+                }
+            } else {
+                randomMovement();
             }
-        }else{
-            randomMovement();
         }
+        avoidWall();
+        keepInsideWorld();
         energy = energy-0.02;
         updateGraphic();
     }
-
+    //give baby rabbit x and y cordinates
     public Rabbit reproduce(){
         double babyX = x + Math.random()*20-10;
         double babyY = y + Math.random()*20-10;
         Rabbit baby = new Rabbit(babyX,babyY);
+        System.out.println("Baby added");
         energy = energy-40;
-        reproductionCooldown = 1;
+        reproductionCooldown = 200;
         return baby;
     }
 
     public boolean canReproduce(){
-        return energy>=80&&reproductionCooldown<=0;
+        return energy>=80&&reproductionCooldown<=0&&age>5;
+    }
+
+    //move away from fox
+    public void moveAwayFrom(Fox fox){
+        double dx = x-fox.getx();
+        double dy = y-fox.gety();
+        double distance = Math.sqrt(dx*dx+dy*dy);
+        if(distance>0){
+            x = x+(dx/distance)*SPEED;
+            y = y+(dy/distance)*SPEED;
+        }
+    }
+
+    //find nearest fox
+    public Fox findNearestFox(List<Animal> animals){
+        Fox nearest = null;
+        double nearestDist = Double.MAX_VALUE;
+        for(Animal animal: animals){
+            if(animal instanceof Fox fox){
+                double distance = distanceTo(fox);
+                if(distance<nearestDist){
+                    nearestDist = distance;
+                    nearest = fox;
+                }
+            }
+
+        }
+        return nearest;
+    }
+    public double distanceTo(Fox fox) {
+        double dx = fox.getx() - x;
+        double dy = fox.gety() - y;
+
+        return Math.sqrt(dx * dx + dy * dy);
+    }
+
+    //avoid wall
+    private void avoidWall(){
+        double wallForce = 2;
+        //left wall
+        if (x < 50) {
+            x = x + wallForce;
+        }
+        //right wall
+        if (x > World.WIDTH -50) {
+            x = x - wallForce;
+        }
+        //top wall
+        if (y < 50) {
+            y =y+ wallForce;
+        }
+        //bottom wall
+        if (y > World.HEIGHT -50) {
+            y = y-wallForce;
+        }
     }
 
     public void updateGraphic(){

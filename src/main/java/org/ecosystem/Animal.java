@@ -25,4 +25,7 @@ public abstract class Animal {
     public boolean isDead(){
         return energy<=0 || age >=60;
     }
+    public void die(){
+        energy = 0;
+    }
 }
